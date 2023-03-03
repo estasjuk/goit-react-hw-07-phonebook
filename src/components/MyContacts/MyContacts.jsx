@@ -1,46 +1,39 @@
 import { useSelector, useDispatch } from 'react-redux';
+import { useEffect } from 'react';
 
 import MyContactsForm from './MyContactsForm/MyContactsForm';
 import MyContactList from './MyContactsList/MyContactsList';
 import MyContactsFind from './MyContactsFind/MyContactsFind';
 
-import { addContact, deleteContact } from 'redux/contacts/contacts-slice';
-import { setFilter } from 'redux/filter/filter-slice';
 import {
-  getAllContacts,
-  getFilteredContacts,
-} from 'redux/contacts/contacts-selectors';
+  fetchAllContacts,
+  fetchAddContact,
+  fetchDeleteContact,
+} from '../../redux/contacts/contacts-operations';
+
+import { setFilter } from 'redux/filter/filter-slice';
+import { getFilteredContacts } from 'redux/contacts/contacts-selectors';
+
 import { getFilter } from 'redux/filter/filter-selectors';
 
 import css from './MyContacts.module.css';
 
 const MyContacts = () => {
   const filteredContacts = useSelector(getFilteredContacts);
-
   const filter = useSelector(getFilter);
-  const allContacts = useSelector(getAllContacts);
 
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    dispatch(fetchAllContacts());
+  }, [dispatch]);
+
   const onAddContact = ({ name, number }) => {
-    if (isDublicate(name)) {
-      alert(`${name} is already exist`);
-      return false;
-    }
-    dispatch(addContact({ name, number }));
-  };
-
-  const isDublicate = name => {
-    const normalizedName = name.toLowerCase();
-    const result = allContacts.find(({ name }) => {
-      return name.toLowerCase() === normalizedName;
-    });
-
-    return Boolean(result);
+    dispatch(fetchAddContact({ name, number }));
   };
 
   const onDeleteContact = id => {
-    dispatch(deleteContact(id));
+    dispatch(fetchDeleteContact(id));
   };
 
   const handleFilter = ({ target }) => dispatch(setFilter(target.value));
