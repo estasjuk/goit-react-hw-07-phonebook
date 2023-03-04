@@ -1,6 +1,5 @@
 export const getFilteredContacts = ({ contacts, filter }) => {
   if (!filter) {
-    //console.log(contacts);
     return contacts.items;
   }
 
